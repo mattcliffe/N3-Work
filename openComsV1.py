@@ -1,26 +1,40 @@
 from usbiss.spi import SPI
 import time
 import matplotlib.pyplot as plt
-spi.close()
-port ='COM60'
-spi = SPI(port)
-spi.mode = 1
-hz =  300000
-spi.max_speed_hz = hz
+def OpenOPC():
+    port ='COM6'
+    spi = SPI(port)
+    spi.mode = 1
+    hz =  300000
+    spi.max_speed_hz = hz
+    
+    senddata = [0x03]
+    x = spi.xfer(senddata)
+    print(x)
 
-#spi.open()
+def CloseOPC():
+    spi.close()
+    
+def SetFanSpeed(Speed):
+    
+    x = senddata=[0x42,0x42,0x42,0x00,speed]
+    y = spi.xfer([0x13,0x13,0x13,0x13,0x13,0x13,0x13,0x13,0x13])
+    return x,y
 
-senddata = [0x03]
-y = []
+
+
+    
+#OpenOPC()
+loop = 1
 try:
     while True:
-        
-        x = spi.xfer2(senddata)
-        
+        Speed = input("Input fan speed in HEX") 
+        x,y=SetFanSpeed(Speed)
         print(x)
-        y.append(x)
-        plt.scatter(len(y),x)
-        time.sleep(1)
-        plt.draw()
+        print(y)
+        print(Speed)
+        time.sleep(2)
+        
 except KeyboardInterrupt:
-    print('interrupted!')
+    CloseOPC()
+    pass
